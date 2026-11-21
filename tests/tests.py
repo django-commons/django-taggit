@@ -42,6 +42,7 @@ from .models import (
     DirectTrackedPet,
     Food,
     HousePet,
+    Media,
     Movie,
     MultiInheritanceFood,
     Name,
@@ -1369,6 +1370,41 @@ class RelatedNameTests(TestCase):
         name.tags.add("foo")
         tag = Tag.objects.get(a_unique_related_name=name.pk)
         self.assertEqual(tag.name, "foo")
+
+    def test_abstract_related_name_is_not_interpolated(self):
+        self.assertEqual(
+            Media._meta.get_field("tags").remote_field.related_name,
+            "%(app_label)s_%(model_name)s_%(class)s_tags",
+        )
+
+    def test_inherited_related_name_placeholders(self):
+        for model, related_name in (
+            (Photo, "tests_photo_photo_tags"),
+            (Movie, "tests_movie_movie_tags"),
+        ):
+            with self.subTest(model=model):
+                self.assertEqual(
+                    model._meta.get_field("tags").remote_field.related_name,
+                    related_name,
+                )
+                self.assertEqual(model.check(), [])
+
+    def test_inherited_related_name_queries(self):
+        photo = Photo.objects.create()
+        photo.tags.add("outdoors")
+        movie = Movie.objects.create()
+        movie.tags.add("hd")
+
+        self.assertQuerySetEqual(
+            Tag.objects.filter(tests_photo_photo_tags=photo.pk),
+            ["outdoors"],
+            transform=lambda tag: tag.name,
+        )
+        self.assertQuerySetEqual(
+            Tag.objects.filter(tests_movie_movie_tags=movie.pk),
+            ["hd"],
+            transform=lambda tag: tag.name,
+        )
 
 
 class OrderedTagsTest(TestCase):
