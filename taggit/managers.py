@@ -548,6 +548,12 @@ class TaggableManager(RelatedField):
         cls._meta.add_field(self)
         setattr(cls, name, self)
         if not cls._meta.abstract:
+            if self.remote_field.related_name:
+                self.remote_field.related_name %= {
+                    "class": cls.__name__.lower(),
+                    "model_name": cls._meta.model_name.lower(),
+                    "app_label": cls._meta.app_label.lower(),
+                }
             if isinstance(self.remote_field.model, str):
 
                 def resolve_related_class(cls, model, field):

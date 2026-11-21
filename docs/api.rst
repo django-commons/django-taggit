@@ -11,6 +11,11 @@ playing around with the API.
     :param through: The through model, see :doc:`custom_tagging` for more
         information.
     :param blank: Controls whether this field is required.
+    :param related_name: The reverse relation name on the tag model. Supports
+        ``%(app_label)s``, ``%(class)s`` and ``%(model_name)s`` placeholders,
+        replaced with the concrete model's lowercased names. For example,
+        ``related_name="%(app_label)s_%(class)s_tags"`` gives each subclass
+        of an abstract model its own reverse relation name.
 
     .. method:: add(*tags, through_defaults=None, tag_kwargs=None)
 

@@ -4,6 +4,9 @@ Changelog
 (Unreleased)
 ~~~~~~~~~~~~
 
+* Support ``%(app_label)s``, ``%(class)s`` and ``%(model_name)s`` placeholders
+  in ``TaggableManager.related_name``, including fields inherited from abstract models.
+
 7.0.0 (2026-11-02)
 ~~~~~~~~~~~~
 

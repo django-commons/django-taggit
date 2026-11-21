@@ -294,7 +294,7 @@ class OfficialHousePet(OfficialPet):
 
 
 class Media(models.Model):
-    tags = TaggableManager()
+    tags = TaggableManager(related_name="%(app_label)s_%(model_name)s_%(class)s_tags")
 
     class Meta:
         abstract = True
